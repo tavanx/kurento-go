@@ -1,9 +1,9 @@
 package kurento
 
 import (
-	"fmt"
 	"errors"
-	)
+	"fmt"
+)
 
 type IRecorderEndpoint interface {
 	Record() error
@@ -22,8 +22,8 @@ func (elem *RecorderEndpoint) getConstructorParams(from IMediaObject, options ma
 	ret := map[string]interface{}{
 		"mediaPipeline":     fmt.Sprintf("%s", from),
 		"uri":               "",
-		"mediaProfile":      fmt.Sprintf("%s", from),
-		"stopOnEndOfStream": fmt.Sprintf("%s", from),
+		"mediaProfile":      MEDIAPROFILESPECTYPE_WEBM,
+		"stopOnEndOfStream": true,
 	}
 
 	// then merge options
@@ -46,7 +46,7 @@ func (elem *RecorderEndpoint) Record() error {
 	response := <-elem.connection.Request(req)
 
 	// Returns error or nil
-	if response.Error != nil { 
+	if response.Error != nil {
 		return errors.New(fmt.Sprintf("[%d] %s %s", response.Error.Code, response.Error.Message, response.Error.Data))
 	}
 	return nil
