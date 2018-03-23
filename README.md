@@ -33,13 +33,15 @@ You will be able to connect to 127.0.0.1:8888 that is the JSONRPC over WebSocket
 In you Go application:
 
 ```go
-import "github.com/metal3d/kurento-go"
+import "github.com/tavanx/kurento4go"
 
 // Create master pipeline and master WebRtcEnpoint
 // that will be shared to viewers
 var pipeline = new(kurento.MediaPipeline)
 var master = new(kurento.WebRtcEndpoint)
 var server = kurento.NewConnection("ws://127.0.0.1:8888")
+server.Create(pipeline, nil)
+pipeline.Create(master, nil)
 
 ...
 
