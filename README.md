@@ -80,6 +80,9 @@ if message["id"] == "viewer" {
         "sdpAnswer" : answer,
     }))
 }
+
+pipeline.Release()
+server.Close()
 ```
 
 Note that SendToClient() and ReadWebsocket() should be implemented by yourself, you may want to use standard websocket handler, or gorilla websocket.
