@@ -81,7 +81,7 @@ func (elem *WebRtcEndpoint) AddIceCandidate(candidate IceCandidate) error {
 
 	// Returns error or nil
 	if response.Error != nil {
-		return errors.New(fmt.Sprintf("[%d] %s %s", response.Error.Code, response.Error.Message, response.Error.Data))
+		return errors.New(fmt.Sprintf("Error: [%d] %s %s", response.Error.Code, response.Error.Message, response.Error.Data))
 	}
 	return nil
 

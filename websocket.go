@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"log"
 	"strings"
+	"sync"
 
 	"golang.org/x/net/websocket"
 )
@@ -56,6 +57,8 @@ type Connection struct {
 	host        string
 	ws          *websocket.Conn
 	SessionId   string
+
+	clientMutex sync.RWMutex
 }
 
 var connections = make(map[string]*Connection)
@@ -119,8 +122,10 @@ func (c *Connection) handleResponse() {
 			go func(r Response) {
 				c.clients[r.Id] <- r
 				// channel is read, we can delete it
+				c.clientMutex.Lock()
 				close(c.clients[r.Id])
 				delete(c.clients, r.Id)
+				c.clientMutex.Unlock()
 			}(r)
 		} else if r.Method == "onEvent" && c.subscribers[r.Params.Value.Data.Type][r.Params.Value.Data.Source] != nil {
 			// Need to send it to the channel created on subscription
