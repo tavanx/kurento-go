@@ -504,6 +504,8 @@ type IMediaElement interface {
 	SetAudioFormat(caps AudioCaps) error
 	SetVideoFormat(caps VideoCaps) error
 	GetStats() (map[string]ElementStats, error)
+	SetMaxVideoSendBandwidth(maxVideoSendBandwidth int) (string, error)
+	SetMaxVideoRecvBandwidth(maxVideoRecvBandwidth int) (string, error)
 }
 
 // Basic building blocks of the media server, that can be interconnected through
@@ -521,6 +523,53 @@ type MediaElement struct {
 func (elem *MediaElement) getConstructorParams(from IMediaObject, options map[string]interface{}) map[string]interface{} {
 	return options
 
+}
+
+func (elem *MediaElement) SetMaxVideoSendBandwidth(maxVideoSendBandwidth int) (string, error) {
+	req := elem.getInvokeRequest()
+
+	params := make(map[string]interface{})
+	params["maxVideoSendBandwidth"] = maxVideoSendBandwidth
+
+	req["params"] = map[string]interface{}{
+		"operation":       "setMaxVideoSendBandwidth",
+		"object":          elem.Id,
+		"operationParams": params,
+	}
+
+	// Call server and wait response
+	response := <-elem.connection.Request(req)
+
+	// // Updated SDP offer, based on the answer received.
+	if response.Error != nil {
+		return "", errors.New(fmt.Sprintf("[%d] %s %s", response.Error.Code, response.Error.Message, response.Error.Data))
+	}
+
+	// elem.MaxVideoSendBandwidth = maxVideoSendBandwidth
+	return trimQuotes(string(response.Result.Value)), nil
+}
+
+func (elem *MediaElement) SetMaxVideoRecvBandwidth(maxVideoRecvBandwidth int) (string, error) {
+	req := elem.getInvokeRequest()
+
+	params := make(map[string]interface{})
+	params["maxVideoRecvBandwidth"] = maxVideoRecvBandwidth
+
+	req["params"] = map[string]interface{}{
+		"operation":       "setMaxVideoRecvBandwidth",
+		"object":          elem.Id,
+		"operationParams": params,
+	}
+
+	// Call server and wait response
+	response := <-elem.connection.Request(req)
+
+	// // Updated SDP offer, based on the answer received.
+	if response.Error != nil {
+		return "", errors.New(fmt.Sprintf("[%d] %s %s", response.Error.Code, response.Error.Message, response.Error.Data))
+	}
+	// elem.MaxVideoRecvBandwidth = maxVideoRecvBandwidth
+	return trimQuotes(string(response.Result.Value)), nil
 }
 
 // Get the connections information of the elements that are sending media to this
