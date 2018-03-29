@@ -26,7 +26,7 @@ This snippet shows a simple way to have master (sender) and viewer (reciever). M
 
 Launch KMS server, or if you have docker, run this command:
     
-    docker start --rm -it -p 8888:8888 kurento/media-server-64:5.1.0-trusty
+    docker start --rm -it -p 8888:8888 kurento/kurento-media-server:6.6.3-1
 
 You will be able to connect to 127.0.0.1:8888 that is the JSONRPC over WebSocket port that opens Kurento.
 
