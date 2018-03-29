@@ -2,9 +2,12 @@ package kurento
 
 import (
 	"encoding/json"
+	"fmt"
+	"io"
 	"log"
 	"strings"
 	"sync"
+	"time"
 
 	"golang.org/x/net/websocket"
 )
@@ -82,6 +85,19 @@ func NewConnection(host string) *Connection {
 	return c
 }
 
+func (c *Connection) IsAviable() bool {
+	ob := []byte{}
+	c.ws.SetReadDeadline(time.Now().Add(time.Second * 3))
+	if _, err := c.ws.Read(ob); err == io.EOF {
+		log.Printf("%s detected closed LAN connection", c.SessionId)
+		c.ws.Close()
+		return false
+	}
+
+	return true
+
+}
+
 func (c *Connection) Create(m IMediaObject, options map[string]interface{}) {
 	elem := &MediaObject{}
 	elem.setConnection(c)
@@ -89,6 +105,7 @@ func (c *Connection) Create(m IMediaObject, options map[string]interface{}) {
 }
 
 func (c *Connection) Close() error {
+	fmt.Printf("Closing ws %s \n", c.SessionId)
 	return c.ws.Close()
 }
 
@@ -123,9 +140,9 @@ func (c *Connection) handleResponse() {
 				c.clients[r.Id] <- r
 				// channel is read, we can delete it
 				c.clientMutex.Lock()
+				defer c.clientMutex.Unlock()
 				close(c.clients[r.Id])
 				delete(c.clients, r.Id)
-				c.clientMutex.Unlock()
 			}(r)
 		} else if r.Method == "onEvent" && c.subscribers[r.Params.Value.Data.Type][r.Params.Value.Data.Source] != nil {
 			// Need to send it to the channel created on subscription
