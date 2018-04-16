@@ -504,8 +504,17 @@ type IMediaElement interface {
 	SetAudioFormat(caps AudioCaps) error
 	SetVideoFormat(caps VideoCaps) error
 	GetStats() (map[string]ElementStats, error)
+	SetMinVideoSendBandwidth(minVideoSendBandwidth int) (string, error)
 	SetMaxVideoSendBandwidth(maxVideoSendBandwidth int) (string, error)
+	SetMinOutputBitrate(minOutputBitrate int) (string, error)
+
+	SetMaxAudioRecvBandwidth(maxAudioRecvBandwidth int) (string, error)
+	SetMinVideoRecvBandwidth(minVideoRecvBandwidth int) (string, error)
 	SetMaxVideoRecvBandwidth(maxVideoRecvBandwidth int) (string, error)
+
+	SetMaxOutputBitrate(maxOutputBitrate int) (string, error)
+
+	SetOutputBitrate(bitrate int) (string, error)
 }
 
 // Basic building blocks of the media server, that can be interconnected through
@@ -549,6 +558,148 @@ func (elem *MediaElement) SetMaxVideoSendBandwidth(maxVideoSendBandwidth int) (s
 	return trimQuotes(string(response.Result.Value)), nil
 }
 
+func (elem *MediaElement) SetMinVideoSendBandwidth(minVideoSendBandwidth int) (string, error) {
+	req := elem.getInvokeRequest()
+
+	params := make(map[string]interface{})
+	params["minVideoSendBandwidth"] = minVideoSendBandwidth
+
+	req["params"] = map[string]interface{}{
+		"operation":       "setMinVideoSendBandwidth",
+		"object":          elem.Id,
+		"operationParams": params,
+	}
+
+	// Call server and wait response
+	response := <-elem.connection.Request(req)
+
+	// // Updated SDP offer, based on the answer received.
+	if response.Error != nil {
+		return "", errors.New(fmt.Sprintf("[%d] %s %s", response.Error.Code, response.Error.Message, response.Error.Data))
+	}
+
+	// elem.MaxVideoSendBandwidth = maxVideoSendBandwidth
+	return trimQuotes(string(response.Result.Value)), nil
+}
+
+func (elem *MediaElement) SetMinOutputBitrate(minOutputBitrate int) (string, error) {
+	req := elem.getInvokeRequest()
+
+	params := make(map[string]interface{})
+	params["minOutputBitrate"] = minOutputBitrate
+
+	req["params"] = map[string]interface{}{
+		"operation":       "setMinOutputBitrate",
+		"object":          elem.Id,
+		"operationParams": params,
+	}
+
+	// Call server and wait response
+	response := <-elem.connection.Request(req)
+
+	// // Updated SDP offer, based on the answer received.
+	if response.Error != nil {
+		return "", errors.New(fmt.Sprintf("[%d] %s %s", response.Error.Code, response.Error.Message, response.Error.Data))
+	}
+
+	// elem.MaxVideoSendBandwidth = maxVideoSendBandwidth
+	return trimQuotes(string(response.Result.Value)), nil
+}
+
+func (elem *MediaElement) SetMaxAudioRecvBandwidth(maxAudioRecvBandwidth int) (string, error) {
+	req := elem.getInvokeRequest()
+
+	params := make(map[string]interface{})
+	params["maxAudioRecvBandwidth"] = maxAudioRecvBandwidth
+
+	req["params"] = map[string]interface{}{
+		"operation":       "setMaxAudioRecvBandwidth",
+		"object":          elem.Id,
+		"operationParams": params,
+	}
+
+	// Call server and wait response
+	response := <-elem.connection.Request(req)
+
+	// // Updated SDP offer, based on the answer received.
+	if response.Error != nil {
+		return "", errors.New(fmt.Sprintf("[%d] %s %s", response.Error.Code, response.Error.Message, response.Error.Data))
+	}
+
+	// elem.MaxVideoSendBandwidth = maxVideoSendBandwidth
+	return trimQuotes(string(response.Result.Value)), nil
+}
+
+func (elem *MediaElement) SetOutputBitrate(bitrate int) (string, error) {
+	req := elem.getInvokeRequest()
+
+	params := make(map[string]interface{})
+	params["bitrate"] = bitrate
+
+	req["params"] = map[string]interface{}{
+		"operation":       "SetOutputBitrate",
+		"object":          elem.Id,
+		"operationParams": params,
+	}
+
+	// Call server and wait response
+	response := <-elem.connection.Request(req)
+
+	// // Updated SDP offer, based on the answer received.
+	if response.Error != nil {
+		return "", errors.New(fmt.Sprintf("[%d] %s %s", response.Error.Code, response.Error.Message, response.Error.Data))
+	}
+
+	// elem.MaxVideoSendBandwidth = maxVideoSendBandwidth
+	return trimQuotes(string(response.Result.Value)), nil
+}
+
+func (elem *MediaElement) SetMaxOutputBitrate(maxOutputBitrate int) (string, error) {
+	req := elem.getInvokeRequest()
+
+	params := make(map[string]interface{})
+	params["maxOutputBitrate"] = maxOutputBitrate
+
+	req["params"] = map[string]interface{}{
+		"operation":       "setMaxOutputBitrate",
+		"object":          elem.Id,
+		"operationParams": params,
+	}
+
+	// Call server and wait response
+	response := <-elem.connection.Request(req)
+
+	// // Updated SDP offer, based on the answer received.
+	if response.Error != nil {
+		return "", errors.New(fmt.Sprintf("[%d] %s %s", response.Error.Code, response.Error.Message, response.Error.Data))
+	}
+
+	// elem.MaxVideoSendBandwidth = maxVideoSendBandwidth
+	return trimQuotes(string(response.Result.Value)), nil
+}
+
+func (elem *MediaElement) SetMinVideoRecvBandwidth(minVideoRecvBandwidth int) (string, error) {
+	req := elem.getInvokeRequest()
+
+	params := make(map[string]interface{})
+	params["minVideoRecvBandwidth"] = minVideoRecvBandwidth
+
+	req["params"] = map[string]interface{}{
+		"operation":       "setMinVideoRecvBandwidth",
+		"object":          elem.Id,
+		"operationParams": params,
+	}
+
+	// Call server and wait response
+	response := <-elem.connection.Request(req)
+
+	// // Updated SDP offer, based on the answer received.
+	if response.Error != nil {
+		return "", errors.New(fmt.Sprintf("[%d] %s %s", response.Error.Code, response.Error.Message, response.Error.Data))
+	}
+	// elem.MaxVideoRecvBandwidth = maxVideoRecvBandwidth
+	return trimQuotes(string(response.Result.Value)), nil
+}
 func (elem *MediaElement) SetMaxVideoRecvBandwidth(maxVideoRecvBandwidth int) (string, error) {
 	req := elem.getInvokeRequest()
 
