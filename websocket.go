@@ -7,7 +7,6 @@ import (
 	"log"
 	"strings"
 	"sync"
-	"time"
 
 	"golang.org/x/net/websocket"
 )
@@ -87,7 +86,7 @@ func NewConnection(host string) *Connection {
 
 func (c *Connection) IsAviable() bool {
 	ob := []byte{}
-	c.ws.SetReadDeadline(time.Now().Add(time.Second * 3))
+	// c.ws.SetReadDeadline(time.Now().Add(time.Second * 3))
 	if _, err := c.ws.Read(ob); err == io.EOF {
 		log.Printf("%s detected closed LAN connection", c.SessionId)
 		c.ws.Close()
